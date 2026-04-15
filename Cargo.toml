@@ -1,0 +1,40 @@
+[package]
+name = "plexus"
+version = "0.1.0"
+edition = "2024"
+description = "Zero-serialization shared-memory IPC primitives for local microservices"
+license = "MIT"
+repository = "https://github.com/rozolini/plexus"
+
+[dependencies]
+thiserror = "2"
+tracing = { version = "0.1", optional = true }
+
+[features]
+default = ["windows", "metrics"]
+windows = []
+loom-tests = []
+metrics = []
+nightly-experimental = []
+tracing-hooks = ["dep:tracing"]
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.59", features = [
+    "Win32_Foundation",
+    "Win32_Security",
+    "Win32_Security_Authorization",
+    "Win32_System_Memory",
+    "Win32_System_Threading",
+] }
+
+[dev-dependencies]
+loom = "0.7"
+rand = "0.9"
+
+[[bench]]
+name = "ipc_bench"
+harness = false
+
+[[bench]]
+name = "grpc_tcp_baseline"
+harness = false

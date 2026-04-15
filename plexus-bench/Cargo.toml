@@ -1,0 +1,13 @@
+[package]
+name = "plexus-bench"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+plexus = { path = ".." }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "io-util"] }
+
+[dev-dependencies]
+criterion = "0.5"

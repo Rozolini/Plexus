@@ -1,0 +1,27 @@
+name: Loom
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  loom-models:
+    name: Loom Model Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run loom model tests
+        run: |
+          cargo test --features loom-tests --test model_publish_tests
+          cargo test --features loom-tests --test model_shared_ring_loom
+          cargo test --features loom-tests --test loom_tests

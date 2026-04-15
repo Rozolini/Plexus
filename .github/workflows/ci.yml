@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-stable:
+    name: Windows Stable
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Format check
+        run: cargo fmt --all -- --check
+
+      - name: Lint
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Build checks
+        run: |
+          cargo check
+          cargo check --tests
+          cargo check --benches
+
+      - name: Unit tests (safe subset)
+        run: cargo test -- --skip stress_ring_million_messages_integrity --skip e2e_two_process_transfer
+
+      - name: Publish model tests
+        run: cargo test --test model_publish_tests
+
+      - name: Ring integrity tests
+        run: cargo test --test ring_integrity_tests
+
+      - name: Mapping primitives tests
+        run: cargo test --test mapping_attach
+
+      - name: Crash consistency and recovery tests
+        run: |
+          cargo test --test crash_consistency
+          cargo test --test liveness_tests
+          cargo test --test reclamation_tests
+
+      - name: High-level API safe bootstrap tests
+        run: cargo test --test high_level_api_tests
+
+      - name: Compatibility suite
+        run: cargo test --test compatibility_tests
+
+      - name: Metadata boundary fuzz-like tests
+        run: cargo test --test fuzz_header_boundaries
+
+      - name: Ops readiness alert simulation
+        run: cargo test --test ops_readiness_tests
+
+      - name: Perf regression gate (quick)
+        shell: pwsh
+        run: ./tools/perf_regression_gate.ps1 -Quick
+
+      - name: Upload perf gate artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-gate-ci
+          path: artifacts/perf
+

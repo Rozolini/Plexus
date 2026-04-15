@@ -1,0 +1,26 @@
+name: Miri
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  miri-checks:
+    name: Miri Property Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust nightly with miri
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: miri
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run miri tests
+        run: cargo +nightly miri test --test property_tests

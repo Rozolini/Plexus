@@ -1,0 +1,46 @@
+# ------------------------------
+# Rust / Cargo build artifacts
+# ------------------------------
+/target/
+/target-loom/
+**/*.rlib
+**/*.rmeta
+**/*.profraw
+**/*.profdata
+
+# ------------------------------
+# Benchmark / perf outputs
+# ------------------------------
+/artifacts/
+*.bench.json
+*.bench.txt
+
+# ------------------------------
+# IDE / editor metadata
+# ------------------------------
+.idea/
+.vscode/
+*.code-workspace
+
+# ------------------------------
+# OS-generated junk files
+# ------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ------------------------------
+# Logs and temporary files
+# ------------------------------
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# ------------------------------
+# Environment / local config
+# ------------------------------
+.env
+.env.*
+!.env.example
